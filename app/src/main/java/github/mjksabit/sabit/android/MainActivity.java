@@ -1,8 +1,9 @@
 package github.mjksabit.sabit.android;
 
 import android.os.Bundle;
-
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import android.os.Environment;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -10,7 +11,17 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.obsez.android.lib.filechooser.ChooserDialog;
+
+import java.io.File;
+
+import static github.mjksabit.sabit.android.utils.FileUtils.permissionGranted;
+import static github.mjksabit.sabit.android.utils.FileUtils.requestPermission;
+
 public class MainActivity extends AppCompatActivity {
+
+    private String TAG = MainActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +36,26 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
+//        navController.navigate(R.id.navigation_settings);
+
+        if(permissionGranted(this)) {
+            new ChooserDialog(MainActivity.this)
+                    .withFilter(false, true)
+                    // to handle the result(s)
+                    .withChosenListener(new ChooserDialog.Result() {
+                        @Override
+                        public void onChoosePath(String path, File pathFile) {
+                            Toast.makeText(MainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .build()
+                    .show();
+        }
+        else{
+            requestPermission(this);
+        }
+
     }
+
 
 }
