@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_home"
-        android:name="github.mjksabit.sabit.android.ui.home.HomeFragment"
+        android:name="github.mjksabit.sabit.android.ui.HomeFragment"
         android:label="@string/title_home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="github.mjksabit.sabit.android.ui.settings.SettingsFragment"
+        android:name="github.mjksabit.sabit.android.ui.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 
     <fragment
         android:id="@+id/navigation_info"
-        android:name="github.mjksabit.sabit.android.ui.information.InformationFragment"
+        android:name="github.mjksabit.sabit.android.ui.InformationFragment"
         android:label="@string/title_info"
         tools:layout="@layout/fragment_info" />
 </navigation>

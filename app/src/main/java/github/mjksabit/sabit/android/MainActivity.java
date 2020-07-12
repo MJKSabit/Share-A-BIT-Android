@@ -1,7 +1,6 @@
 package github.mjksabit.sabit.android;
 
 import android.os.Bundle;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
@@ -10,12 +9,6 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.obsez.android.lib.filechooser.ChooserDialog;
-
-import java.io.File;
-
-import static github.mjksabit.sabit.android.utils.FileUtils.permissionGranted;
-import static github.mjksabit.sabit.android.utils.FileUtils.requestPermission;
 
 public class MainActivity extends AppCompatActivity {
 

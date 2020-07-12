@@ -1,4 +1,4 @@
-package github.mjksabit.sabit.android.ui.settings;
+package github.mjksabit.sabit.android.ui;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,20 +16,9 @@ import github.mjksabit.sabit.android.R;
 
 public class SettingsFragment extends Fragment {
 
-    private SettingsViewModel dashboardViewModel;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        dashboardViewModel =
-                ViewModelProviders.of(this).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        final TextView textView = root.findViewById(R.id.text_dashboard);
-        dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
-            }
-        });
         return root;
     }
 }
