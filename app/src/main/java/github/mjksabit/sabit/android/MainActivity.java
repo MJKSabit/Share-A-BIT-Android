@@ -1,8 +1,6 @@
 package github.mjksabit.sabit.android;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -37,24 +35,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 //        navController.navigate(R.id.navigation_settings);
-
-        if(permissionGranted(this)) {
-            new ChooserDialog(MainActivity.this)
-                    .withFilter(false, true)
-                    // to handle the result(s)
-                    .withChosenListener(new ChooserDialog.Result() {
-                        @Override
-                        public void onChoosePath(String path, File pathFile) {
-                            Toast.makeText(MainActivity.this, "FOLDER: " + path, Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .build()
-                    .show();
-        }
-        else{
-            requestPermission(this);
-        }
-
     }
 
 
