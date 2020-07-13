@@ -90,10 +90,6 @@ public class SettingsFragment extends Fragment {
             showDirectoryPicker(receiveLocationText);
         }
         else {
-            AlertDialog alertDialog = new AlertDialog.Builder(getContext())
-                    .setTitle(R.string.permission_required)
-                    .setMessage(R.string.permission_details)
-                    .show();
             FileUtils.requestPermission(getActivity());
         }
     }

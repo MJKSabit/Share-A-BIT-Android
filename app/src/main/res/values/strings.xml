@@ -11,4 +11,6 @@
     <string name="save_settings">Save</string>
     <string name="permission_required">Permission Required</string>
     <string name="permission_details">To Receive (Write) and Send (Read) file, We need File System Permission\nTry again after the permission has been granted.</string>
+    <string name="sender_connection_title">Sender Mode</string>
+    <string name="receiver_connection_title">Receiver Mode</string>
 </resources>

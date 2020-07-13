@@ -1,4 +1,4 @@
-package github.mjksabit.sabit.android;
+package github.mjksabit.sabit.android.activities;
 
 import android.os.Bundle;
 
@@ -10,9 +10,11 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class MainActivity extends AppCompatActivity {
+import github.mjksabit.sabit.android.R;
 
-    private String TAG = MainActivity.class.getSimpleName();
+public class StartActivity extends AppCompatActivity {
+
+    private String TAG = StartActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
