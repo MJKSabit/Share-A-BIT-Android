@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 
 import github.mjksabit.sabit.android.R;
 import github.mjksabit.sabit.android.utils.Constants;
+import github.mjksabit.sabit.android.utils.SConnection;
 import github.mjksabit.sabit.core.Receiver;
 
 public class ReceiverActivity extends AppCompatActivity {
@@ -39,15 +40,18 @@ public class ReceiverActivity extends AppCompatActivity {
         username.setText(usernameID);
 
         receiver = new Receiver(usernameID);
+        receiver.setFileSaveDirectory(receiveDirectory);
 
         connectionThread.execute(() -> {
             try {
                 String senderName = receiver.waitForSender();
 
-                Intent connection = new Intent(this, SenderActivity.class);
+                Intent connection = new Intent(this, ConnectedActivity.class);
                 connection.putExtra(Constants.USERNAME_KEY, usernameID);
                 connection.putExtra(Constants.CONNECTED_TO_KEY, senderName);
                 connection.putExtra(Constants.RECEIVE_PATH_KEY, receiveDirectory);
+
+                SConnection.setConnection(receiver);
 
                 runOnUiThread(() -> startActivity(connection));
             } catch (IOException e) {

@@ -22,4 +22,11 @@
     <string name="update_button_text">Check for Updates</string>
     <string name="github">GitHub</string>
     <string name="website_header">Website</string>
+    <string name="cancel_text">Cancel</string>
+    <string name="show_received_files">Show Received</string>
+    <string name="end_connection">END</string>
+    <string name="transfers_header">Transfers</string>
+    <string name="speed_placeholder">00.000 MB</string>
+    <string name="per_second">/s</string>
+    <string name="speed_icon_description">Current Speed</string>
 </resources>

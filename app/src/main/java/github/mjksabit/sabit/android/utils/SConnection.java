@@ -10,7 +10,7 @@ public class SConnection {
 
     public static void setConnection(Connection connection) throws IllegalStateException{
         if (SConnection.connection != null)
-            throw new IllegalStateException("Connection Already Set");
+            endConnection();
 
         SConnection.connection = connection;
     }

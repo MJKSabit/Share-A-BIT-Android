@@ -9,4 +9,6 @@
     <color name="storage_progress_color">#0099aa</color>
     <color name="fab_color">#0099aa</color>
     <color name="invisible_color">#00FFFFFF</color>
+    <color name="cancel_button_color">#E53935</color>
+    <color name="add_button_color">#1AC422</color>
 </resources>
