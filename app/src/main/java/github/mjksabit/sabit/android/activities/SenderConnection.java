@@ -8,6 +8,8 @@ import github.mjksabit.sabit.android.R;
 
 public class SenderConnection extends AppCompatActivity {
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

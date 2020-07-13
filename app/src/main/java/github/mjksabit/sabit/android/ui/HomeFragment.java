@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import github.mjksabit.sabit.android.R;
@@ -23,16 +22,6 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     private SharedPreferences settings;
     private String usernameText;
     private String receiveLocationText;
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
-
-        usernameText = settings.getString(Constants.SETTINGS_ID, getResources().getString(R.string.default_id_name));
-        receiveLocationText = settings.getString(Constants.SETTINGS_PATH, getContext().getObbDir().getAbsolutePath());
-    }
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -47,6 +36,14 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         return root;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+
+        usernameText = settings.getString(Constants.SETTINGS_ID, getResources().getString(R.string.default_id_name));
+        receiveLocationText = settings.getString(Constants.SETTINGS_PATH, getContext().getObbDir().getAbsolutePath());
+    }
 
     @Override
     public void onClick(View v) {

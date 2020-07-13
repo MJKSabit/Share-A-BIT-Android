@@ -14,4 +14,12 @@
     <string name="sender_connection_title">Sender Mode</string>
     <string name="receiver_connection_title">Receiver Mode</string>
     <string name="update_link">https://mjksabit.github.io</string>
+    <string name="version_text">v 0.1.0</string>
+    <string name="developer_header">Developed By</string>
+    <string name="developer_name">Md. Jehadul Karim (Sabit)</string>
+    <string name="github_username">MJKSabit</string>
+    <string name="developer_website">mjksabit.github.io</string>
+    <string name="update_button_text">Check for Updates</string>
+    <string name="github">GitHub</string>
+    <string name="website_header">Website</string>
 </resources>
