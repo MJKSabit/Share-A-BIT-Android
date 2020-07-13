@@ -3,4 +3,12 @@
     <string name="title_home">Home</string>
     <string name="title_settings">Settings</string>
     <string name="title_info">Information</string>
+    <string name="identifier_name">Identifier Name</string>
+    <string name="default_id_name">Android User</string>
+    <string name="receive_location_placeholder">/sdcard/Android/obb/github.mjksabit.sabit.android/</string>
+    <string name="select_receive_directory">...</string>
+    <string name="receive_option_header">Receive Directory</string>
+    <string name="save_settings">Save</string>
+    <string name="permission_required">Permission Required</string>
+    <string name="permission_details">To Receive (Write) and Send (Read) file, We need File System Permission\nTry again after the permission has been granted.</string>
 </resources>

@@ -8,4 +8,5 @@
     <color name="folder_color">#0099aa</color>
     <color name="storage_progress_color">#0099aa</color>
     <color name="fab_color">#0099aa</color>
+    <color name="invisible_color">#00FFFFFF</color>
 </resources>
