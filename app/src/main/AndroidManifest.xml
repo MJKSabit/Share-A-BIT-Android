@@ -16,10 +16,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".activities.SenderConnection" android:parentActivityName=".activities.StartActivity"
-            android:label="@string/sender_connection_title"/>
-        <activity android:name=".activities.ReceiverConnection" android:parentActivityName=".activities.StartActivity"
-            android:label="@string/receiver_connection_title"/>
+        <activity android:name=".activities.ConnectedActivity"
+            android:label="@string/app_name"
+            android:parentActivityName=".activities.StartActivity"/>
+        <activity
+            android:name=".activities.SenderActivity"
+            android:label="@string/sender_connection_title"
+            android:parentActivityName=".activities.StartActivity" />
+        <activity
+            android:name=".activities.ReceiverActivity"
+            android:label="@string/receiver_connection_title"
+            android:parentActivityName=".activities.StartActivity" />
         <activity
             android:name=".activities.StartActivity"
             android:label="@string/app_name">

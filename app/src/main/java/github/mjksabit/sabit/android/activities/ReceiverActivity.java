@@ -15,7 +15,7 @@ import github.mjksabit.sabit.android.R;
 import github.mjksabit.sabit.android.utils.Constants;
 import github.mjksabit.sabit.core.Receiver;
 
-public class ReceiverConnection extends AppCompatActivity {
+public class ReceiverActivity extends AppCompatActivity {
 
     private TextView username;
 
@@ -32,8 +32,8 @@ public class ReceiverConnection extends AppCompatActivity {
         setContentView(R.layout.receiver_connection_layout);
 
         Intent prevData = getIntent();
-        usernameID = prevData.getStringExtra(Constants.SETTINGS_ID);
-        receiveDirectory = prevData.getStringExtra(Constants.SETTINGS_PATH);
+        usernameID = prevData.getStringExtra(Constants.USERNAME_KEY);
+        receiveDirectory = prevData.getStringExtra(Constants.RECEIVE_PATH_KEY);
 
         username = findViewById(R.id.usernameID);
         username.setText(usernameID);
@@ -44,9 +44,10 @@ public class ReceiverConnection extends AppCompatActivity {
             try {
                 String senderName = receiver.waitForSender();
 
-                Intent connection = new Intent(this, SenderConnection.class);
-                connection.putExtra(Constants.SETTINGS_ID, senderName);
-                connection.putExtra(Constants.SETTINGS_PATH, receiveDirectory);
+                Intent connection = new Intent(this, SenderActivity.class);
+                connection.putExtra(Constants.USERNAME_KEY, usernameID);
+                connection.putExtra(Constants.CONNECTED_TO_KEY, senderName);
+                connection.putExtra(Constants.RECEIVE_PATH_KEY, receiveDirectory);
 
                 runOnUiThread(() -> startActivity(connection));
             } catch (IOException e) {

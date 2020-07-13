@@ -6,7 +6,7 @@ import android.os.Bundle;
 
 import github.mjksabit.sabit.android.R;
 
-public class SenderConnection extends AppCompatActivity {
+public class SenderActivity extends AppCompatActivity {
 
 
 

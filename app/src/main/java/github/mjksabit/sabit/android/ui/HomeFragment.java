@@ -13,13 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import github.mjksabit.sabit.android.R;
-import github.mjksabit.sabit.android.activities.ReceiverConnection;
-import github.mjksabit.sabit.android.activities.SenderConnection;
+import github.mjksabit.sabit.android.activities.ReceiverActivity;
+import github.mjksabit.sabit.android.activities.SenderActivity;
 import github.mjksabit.sabit.android.utils.Constants;
 
 public class HomeFragment extends Fragment implements View.OnClickListener {
 
-    private SharedPreferences settings;
     private String usernameText;
     private String receiveLocationText;
 
@@ -39,7 +38,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
         usernameText = settings.getString(Constants.SETTINGS_ID, getResources().getString(R.string.default_id_name));
         receiveLocationText = settings.getString(Constants.SETTINGS_PATH, getContext().getObbDir().getAbsolutePath());
@@ -50,16 +49,16 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         Intent intent = null;
         switch (v.getId()) {
             case R.id.send_button : {
-                intent = new Intent(getContext(), SenderConnection.class);
+                intent = new Intent(getContext(), SenderActivity.class);
                 break;
             }
             case R.id.receive_button : {
-                intent = new Intent(getContext(), ReceiverConnection.class);
+                intent = new Intent(getContext(), ReceiverActivity.class);
                 break;
             }
         }
-        intent.putExtra(Constants.SETTINGS_ID, usernameText);
-        intent.putExtra(Constants.SETTINGS_PATH, receiveLocationText);
+        intent.putExtra(Constants.USERNAME_KEY, usernameText);
+        intent.putExtra(Constants.RECEIVE_PATH_KEY, receiveLocationText);
         startActivity(intent);
     }
 }
