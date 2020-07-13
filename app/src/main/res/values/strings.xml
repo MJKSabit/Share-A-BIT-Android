@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Share A BIT Android</string>
+    <string name="app_name">Share A BIT</string>
     <string name="title_home">Home</string>
     <string name="title_settings">Settings</string>
     <string name="title_info">Information</string>
@@ -13,4 +13,5 @@
     <string name="permission_details">To Receive (Write) and Send (Read) file, We need File System Permission\nTry again after the permission has been granted.</string>
     <string name="sender_connection_title">Sender Mode</string>
     <string name="receiver_connection_title">Receiver Mode</string>
+    <string name="update_link">https://mjksabit.github.io</string>
 </resources>
