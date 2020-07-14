@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.SocketException;
@@ -196,6 +199,10 @@ public class ConnectedActivity extends AppCompatActivity {
         String connectedTo = data.getStringExtra(Constants.CONNECTED_TO_KEY);
         receiveFolder = data.getStringExtra(Constants.RECEIVE_PATH_KEY);
 
+        String initialSend = data.getStringExtra(Constants.INITIAL_FILES_KEY);
+        if (initialSend==null)
+            initialSend = "[]";
+
         connectedToUserText.setText(connectedTo);
 
         speedUpdaterThread.execute(() -> {
@@ -217,6 +224,15 @@ public class ConnectedActivity extends AppCompatActivity {
         try {
             connection.startReceiving(new ReceiveProgress());
         } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            JSONArray initialPaths = new JSONArray(initialSend);
+            for (int i=0; i<initialPaths.length(); i++) {
+                sendFile(new File(initialPaths.getString(i)));
+            }
+        } catch (JSONException e) {
             e.printStackTrace();
         }
     }

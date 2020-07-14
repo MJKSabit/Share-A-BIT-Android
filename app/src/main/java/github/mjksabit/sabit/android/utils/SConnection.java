@@ -13,6 +13,7 @@ public class SConnection {
             endConnection();
 
         SConnection.connection = connection;
+        connection.setFileSaveDirectory(receiveDirectory);
     }
 
     public static Connection getConnection() throws NullPointerException {

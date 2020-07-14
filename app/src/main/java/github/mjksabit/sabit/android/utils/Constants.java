@@ -12,4 +12,5 @@ public interface Constants {
     String COMPLETED_BG_COLOR = "#70db70";
 
     int bytePerMB = 1024*1024;
+    String INITIAL_FILES_KEY = "initialSend";
 }

@@ -14,6 +14,8 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import org.json.JSONArray;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -169,10 +171,15 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
                 sender.setFileSaveDirectory(receiveDirectory);
                 SConnection.setConnection(sender, receiveDirectory);
 
+                JSONArray filePaths = new JSONArray();
+                for (InfoFile file : sendFiles)
+                    filePaths.put(file.getFile().getAbsolutePath());
+
                 Intent connection = new Intent(getBaseContext(), ConnectedActivity.class);
                 connection.putExtra(Constants.USERNAME_KEY, senderName);
                 connection.putExtra(Constants.CONNECTED_TO_KEY, receiver);
                 connection.putExtra(Constants.RECEIVE_PATH_KEY, receiveDirectory);
+                connection.putExtra(Constants.INITIAL_FILES_KEY, filePaths.toString());
 
                 runOnUiThread(() -> {
                     startActivity(connection);
