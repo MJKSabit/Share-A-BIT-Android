@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="10dp"
-    tools:context=".ui.InformationFragment" >
+    tools:context=".ui.InformationFragment">
 
     <TextView
         android:id="@+id/version_text"
@@ -21,8 +21,7 @@
         android:id="@+id/app_name_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="16dp"
         android:text="@string/app_name"
         android:textColor="@color/colorPrimaryDark"
         android:textSize="50sp"
@@ -36,17 +35,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
+        android:contentDescription="@string/github"
         android:src="@drawable/ic_github_black_32dp"
         app:layout_constraintStart_toStartOf="@+id/developed_by_header"
-        app:layout_constraintTop_toBottomOf="@+id/developer_name"
-        android:contentDescription="@string/github" />
+        app:layout_constraintTop_toBottomOf="@+id/developer_name" />
 
     <TextView
         android:id="@+id/developed_by_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
         android:text="@string/developer_header"
         app:layout_constraintStart_toStartOf="@+id/app_name_info"
         app:layout_constraintTop_toBottomOf="@+id/version_text" />
@@ -55,7 +53,7 @@
         android:id="@+id/developer_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:padding="10dp"
         android:text="@string/developer_name"
         android:textColor="@android:color/black"
@@ -83,10 +81,10 @@
         style="@style/dev_links_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/website_header"
         android:src="@drawable/ic_web_black_32dp"
         app:layout_constraintStart_toStartOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        android:contentDescription="@string/website_header" />
+        app:layout_constraintTop_toBottomOf="@+id/imageView" />
 
     <TextView
         android:id="@+id/dev_website"
@@ -103,7 +101,7 @@
         android:id="@+id/update_check"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/update_button_text"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -114,34 +112,36 @@
         android:id="@+id/association_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="12dp"
         android:text="@string/association_header"
         app:layout_constraintBottom_toTopOf="@+id/associate_name"
-        app:layout_constraintEnd_toEndOf="@+id/associate_name" />
+        app:layout_constraintEnd_toEndOf="@+id/associate_name"
+        app:layout_constraintTop_toBottomOf="@+id/dev_website"
+        app:layout_constraintVertical_chainStyle="packed" />
 
     <TextView
         android:id="@+id/associate_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="32dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="10dp"
         android:text="@string/associate_name"
         android:textColor="@android:color/black"
         android:textSize="28dp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/github_logo_associate"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/association_header" />
 
     <ImageView
         android:id="@+id/github_logo_associate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:layout_marginBottom="52dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="22dp"
         android:src="@drawable/ic_github_black_32dp"
         app:layout_constraintBottom_toTopOf="@+id/update_check"
-        app:layout_constraintEnd_toEndOf="@+id/associate_name" />
+        app:layout_constraintEnd_toEndOf="@+id/associate_name"
+        app:layout_constraintTop_toBottomOf="@+id/associate_name" />
 
     <TextView
         android:id="@+id/associate_github"

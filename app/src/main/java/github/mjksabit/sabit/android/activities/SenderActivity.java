@@ -142,6 +142,9 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
     volatile boolean isRefreshing = false;
     public void refreshReceiversList(View view) {
         receiverSelectionPanel.removeAllViews();
+        usedAngles.clear();
+        servers.clear();
+
         new Thread(() -> {
             isRefreshing = true;
             runOnUiThread(() -> {
@@ -170,7 +173,7 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
     private int middle;
     ArrayList<Double> usedAngles = new ArrayList<>();
 
-    private void addServer(Sender.ServerInfo info) {
+    private synchronized void addServer(Sender.ServerInfo info) {
         Double useAngle = 0.0;
 
         if (usedAngles.size() != 0) {
