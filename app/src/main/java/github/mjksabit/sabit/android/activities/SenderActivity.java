@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.MarginLayoutParams;
@@ -189,9 +190,9 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
 
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
 
-        Button selector = new Button(this);
-        selector.setText(info.getName());
-        selector.setHeight(selector.getMeasuredWidth());
+        View selector = LayoutInflater.from(this).inflate(R.layout.unit_receiver, receiverSelectionPanel, false);
+        TextView userNameText = selector.findViewById(R.id.receiver_name_unit);
+        userNameText.setText(info.getName());
         selector.setTag(info);
         selector.setOnClickListener(this::establishConnection);
 
