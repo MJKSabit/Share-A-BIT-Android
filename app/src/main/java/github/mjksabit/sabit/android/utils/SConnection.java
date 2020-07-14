@@ -8,7 +8,7 @@ public class SConnection {
 
     private static Connection connection;
 
-    public static void setConnection(Connection connection) throws IllegalStateException{
+    public static void setConnection(Connection connection, String receiveDirectory) throws IllegalStateException{
         if (SConnection.connection != null)
             endConnection();
 

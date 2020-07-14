@@ -40,7 +40,6 @@ public class ReceiverActivity extends AppCompatActivity {
         username.setText(usernameID);
 
         receiver = new Receiver(usernameID);
-        receiver.setFileSaveDirectory(receiveDirectory);
 
         connectionThread.execute(() -> {
             try {
@@ -52,7 +51,7 @@ public class ReceiverActivity extends AppCompatActivity {
                 connection.putExtra(Constants.RECEIVE_PATH_KEY, receiveDirectory);
 
                 receiver.stopListening();
-                SConnection.setConnection(receiver);
+                SConnection.setConnection(receiver, receiveDirectory);
 
                 runOnUiThread(() -> {
                     startActivity(connection);

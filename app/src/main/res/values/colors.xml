@@ -11,4 +11,5 @@
     <color name="invisible_color">#00FFFFFF</color>
     <color name="cancel_button_color">#E53935</color>
     <color name="add_button_color">#1AC422</color>
+    <color name="warning_text">#FB8C00</color>
 </resources>

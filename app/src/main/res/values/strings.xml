@@ -46,4 +46,7 @@
     <string name="file_size_placeholder">0000.000 MB</string>
     <string name="sender_file_list_header">Files to Send</string>
     <string name="show_receiver_selection_panel">Next</string>
+    <string name="receiver_waiting_text">Waiting for sender to connect</string>
+    <string name="connection_warning_text">Please make sure Senderand Receiveris connected to the same network ( via WiFi or Hotspot )</string>
+    <string name="cancel_button">Cancel</string>
 </resources>
