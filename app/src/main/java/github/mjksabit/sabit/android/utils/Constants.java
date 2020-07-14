@@ -9,5 +9,7 @@ public interface Constants {
     String CONNECTED_TO_KEY = "other";
     String RECEIVE_PATH_KEY = "receiveLocation";
 
+    String COMPLETED_BG_COLOR = "#70db70";
+
     int bytePerMB = 1024*1024;
 }

@@ -54,7 +54,7 @@
         app:backgroundTint="@color/add_button_color"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@android:drawable/ic_input_add" />
+        app:srcCompat="@drawable/ic_add_file" />
 
     <Button
         android:id="@+id/cancel_button"
@@ -64,6 +64,7 @@
         android:backgroundTint="@color/cancel_button_color"
         android:onClick="cancelSending"
         android:text="@string/cancel_text"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/floatingActionButton" />
@@ -74,6 +75,7 @@
         android:layout_height="0dp"
         android:onClick="showReceivedFolder"
         android:text="@string/show_received_files"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
         app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
         app:layout_constraintHorizontal_bias="0.75"
@@ -134,10 +136,11 @@
         app:layout_constraintEnd_toEndOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/send_layout"
         android:layout_width="match_parent"
         android:layout_height="60dp"
-        android:id="@+id/send_layout"
         android:padding="5dp"
+        android:visibility="visible"
         app:layout_constraintTop_toBottomOf="@+id/connected_to_username"
         tools:layout_editor_absoluteX="5dp">
 
@@ -156,9 +159,15 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="12dp"
+            android:layout_marginEnd="8dp"
+            android:lines="1"
+            android:maxLines="1"
+            android:nestedScrollingEnabled="true"
+            android:singleLine="true"
             android:text="Inception.720p.mkv"
             android:textColor="@android:color/black"
             android:textSize="16sp"
+            app:layout_constraintEnd_toStartOf="@+id/send_file_size"
             app:layout_constraintStart_toEndOf="@+id/send_icon"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -267,4 +276,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_folder_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:clickable="true"
+        android:onClick="addSendFolder"
+        app:backgroundTint="@color/add_button_color"
+        app:layout_constraintBottom_toBottomOf="@+id/floatingActionButton"
+        app:layout_constraintEnd_toStartOf="@+id/floatingActionButton"
+        app:layout_constraintTop_toTopOf="@+id/floatingActionButton"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_add_folder" />
 </androidx.constraintlayout.widget.ConstraintLayout>

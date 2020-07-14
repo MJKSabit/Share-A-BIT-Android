@@ -1,9 +1,11 @@
 package github.mjksabit.sabit.android.activities;
 
 import android.content.Intent;
-import android.net.Uri;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -11,12 +13,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.obsez.android.lib.filechooser.ChooserDialog;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.SocketException;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import github.mjksabit.sabit.android.R;
+import github.mjksabit.sabit.android.data.InfoFile;
 import github.mjksabit.sabit.android.utils.Constants;
 import github.mjksabit.sabit.android.utils.SConnection;
 import github.mjksabit.sabit.core.Connection;
@@ -34,6 +44,7 @@ public class ConnectedActivity extends AppCompatActivity {
     ExecutorService speedUpdaterThread = Executors.newSingleThreadExecutor();
 
     private volatile boolean isReceiving = false;
+    private volatile boolean isSending = false;
 
 
     private String getInMB(long size) {
@@ -65,7 +76,7 @@ public class ConnectedActivity extends AppCompatActivity {
                 fileSize = totalProgress;
                 runOnUiThread(()->receiveFileTotal.setText(getInMB(totalProgress)));
             }
-            double percentage = currentProgress*100 / totalProgress;
+            double percentage = currentProgress*100.0 / totalProgress;
             String string = getInMB(currentProgress);
             runOnUiThread(() -> {
                 receiveFileDone.setText(string);
@@ -87,59 +98,61 @@ public class ConnectedActivity extends AppCompatActivity {
         public void endProgress(File file) {
             byteTransferredInTime += fileSize - lastProgress;
             runOnUiThread(() -> {
-//                transmissionList.add(new FileNode(false, file.getName(), fileSize));
-                receiveLayout.setVisibility(View.INVISIBLE);
+                transmissionList.add(new InfoFile(InfoFile.ShareState.RECEIVE, file));
+                receiveLayout.startAnimation(receiveCompletedAnimation);
             });
             isReceiving = false;
         }
     }
 
-//    private class SendProgress implements IFTP.ProgressUpdater {
-//        private long lastProgress = 0;
-//        private int index;
-//
-//        @Override
-//        public void startProgress(File file) {
-//            runOnUiThread(() -> {
-//                sendPane.setVisible(true);
-//                sendFileNameText.setText(file.getName());
-//                index = transmissionList.size();
-//                transmissionList.add(new FileNode(true, file.getName(), file.length()));
-//                sendTotalInMB.setText(getInMB(file.length()));
-//            });
-//            lastProgress = 0;
-//        }
-//
-//        @Override
-//        public void continueProgress(long currentProgress, long totalProgress) {
-//            byteTransferredInTime += currentProgress - lastProgress;
-//            lastProgress = currentProgress;
-//            double percentage = (double) currentProgress / totalProgress;
-//            String string = getInMB(currentProgress);
-//            runOnUiThread(() -> {
-//                sentInMB.setText(string);
-//                sendProgressBar.setProgress(percentage);
-//                sentPercentage.setText(String.format("%.1f %%",percentage*100));
-//            });
-//        }
-//
-//        @Override
-//        public void cancelProgress(File file) {
-//            runOnUiThread(() -> {
-//                sendProgressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
-//                sendFileNameText.setText("Canceled");
-//            });
-//        }
-//
-//        @Override
-//        public void endProgress(File file) {
-//            byteTransferredInTime += file.length() - lastProgress;
-//            runOnUiThread(() -> {
-//                transmissionList.get(index).markDone();
-//                sendPane.setVisible(false);
-//            });
-//        }
-//    }
+    private class SendProgress implements IFTP.ProgressUpdater {
+        private long lastProgress = 0;
+
+        @Override
+        public void startProgress(File file) {
+            runOnUiThread(() -> {
+                sendFileProgressBar.setIndeterminate(false);
+                sendLayout.setVisibility(View.VISIBLE);
+                sendFileName.setText(file.getName());
+                sendFileTotal.setText(getInMB(file.length()));
+            });
+            lastProgress = 0;
+            isSending = true;
+        }
+
+        @Override
+        public void continueProgress(long currentProgress, long totalProgress) {
+            byteTransferredInTime += currentProgress - lastProgress;
+            lastProgress = currentProgress;
+            double percentage = (double) currentProgress*100 / totalProgress;
+            String string = getInMB(currentProgress);
+            runOnUiThread(() -> {
+                sendFileDone.setText(string);
+                sendFileProgressBar.setProgress((int) percentage);
+                sendFilePercentage.setText(String.format("%.1f %%",percentage));
+            });
+        }
+
+        @Override
+        public void cancelProgress(File file) {
+            runOnUiThread(() -> {
+                sendFileProgressBar.setIndeterminate(true);
+                sendFileName.setText("Canceled");
+            });
+        }
+
+        @Override
+        public void endProgress(File file) {
+            byteTransferredInTime += file.length() - lastProgress;
+            isSending = false;
+            runOnUiThread(() -> {
+                sendLayout.startAnimation(sendCompletedAnimation);
+            });
+        }
+    }
+
+    private Animation receiveCompletedAnimation;
+    private Animation sendCompletedAnimation;
 
     private ConstraintLayout sendLayout;
     private TextView sendFileName;
@@ -160,31 +173,16 @@ public class ConnectedActivity extends AppCompatActivity {
 
     private RecyclerView transferRecyclerView;
 
-    String receiveFolder;
+    private String receiveFolder;
+
+    private ArrayList<InfoFile> transmissionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_connected);
 
-        connectedToUserText = findViewById(R.id.connected_to_username);
-        transferSpeedText = findViewById(R.id.speed_text);
-
-        sendLayout = findViewById(R.id.send_layout);
-        sendFileName = findViewById(R.id.send_file_name);
-        sendFileTotal = findViewById(R.id.send_file_size);
-        sendFileDone = findViewById(R.id.send_progress_done);
-        sendFilePercentage = findViewById(R.id.send_progress_percentage);
-        sendFileProgressBar = findViewById(R.id.send_progress_bar);
-
-        receiveLayout = findViewById(R.id.receive_layout);
-        receiveFileName = findViewById(R.id.receive_file_name);
-        receiveFileTotal = findViewById(R.id.receive_file_size);
-        receiveFileDone = findViewById(R.id.receive_progress_done);
-        receiveFilePercentage = findViewById(R.id.receive_progress_percentage);
-        receiveFileProgressBar = findViewById(R.id.receive_progress_bar);
-
-        transferRecyclerView = findViewById(R.id.transfer_list);
+        init();
 
         connection = SConnection.getConnection();
 
@@ -194,6 +192,22 @@ public class ConnectedActivity extends AppCompatActivity {
 
         connectedToUserText.setText(connectedTo);
 
+        speedUpdaterThread.execute(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(UPDATE_TIME*1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                synchronized (byteTransferredInTime) {
+                    long transferredNow = Math.max(byteTransferredInTime, 0);
+                    byteTransferredInTime = 0l;
+                    runOnUiThread(() -> transferSpeedText.setText(getInMB(transferredNow/UPDATE_TIME)));
+                }
+            }
+        });
+
         try {
             connection.startReceiving(new ReceiveProgress());
         } catch (SocketException e) {
@@ -201,20 +215,127 @@ public class ConnectedActivity extends AppCompatActivity {
         }
     }
 
-    public void addSendFiles(View v) {
+    private void init() {
+        connectedToUserText = findViewById(R.id.connected_to_username);
+        transferSpeedText = findViewById(R.id.speed_text);
 
+        receiveCompletedAnimation = AnimationUtils.loadAnimation(this, R.anim.completed_transfer);
+        receiveCompletedAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                receiveLayout.setBackgroundColor(Color.parseColor(Constants.COMPLETED_BG_COLOR));
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (!isReceiving)
+                    receiveLayout.setVisibility(View.GONE);
+                receiveLayout.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        sendCompletedAnimation = AnimationUtils.loadAnimation(this, R.anim.completed_transfer);
+        sendCompletedAnimation.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+                sendLayout.setBackgroundColor(Color.parseColor(Constants.COMPLETED_BG_COLOR));
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                if (!isSending)
+                    sendLayout.setVisibility(View.GONE);
+                sendLayout.setBackgroundColor(Color.TRANSPARENT);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+
+        sendLayout = findViewById(R.id.send_layout);
+        sendLayout.setVisibility(View.GONE);
+        sendFileName = findViewById(R.id.send_file_name);
+        sendFileTotal = findViewById(R.id.send_file_size);
+        sendFileDone = findViewById(R.id.send_progress_done);
+        sendFilePercentage = findViewById(R.id.send_progress_percentage);
+        sendFileProgressBar = findViewById(R.id.send_progress_bar);
+
+        receiveLayout = findViewById(R.id.receive_layout);
+        receiveLayout.setVisibility(View.GONE);
+        receiveFileName = findViewById(R.id.receive_file_name);
+        receiveFileTotal = findViewById(R.id.receive_file_size);
+        receiveFileDone = findViewById(R.id.receive_progress_done);
+        receiveFilePercentage = findViewById(R.id.receive_progress_percentage);
+        receiveFileProgressBar = findViewById(R.id.receive_progress_bar);
+
+        transferRecyclerView = findViewById(R.id.transfer_list);
+    }
+
+    public void addSendFolder(View v) {
+        new ChooserDialog(this)
+                .titleFollowsDir(true)
+                .withFilter(true, false)
+                .displayPath(true)
+                .withChosenListener((dir, dirFile) -> {
+                    try {
+                        connection.sendFile(dirFile, new SendProgress());
+                        transmissionList.add(new InfoFile(InfoFile.ShareState.SEND, dirFile));
+                    } catch (FileNotFoundException | SocketException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .build()
+                .show();
+    }
+
+    private Map<String, File> temporaryFiles = new LinkedHashMap<>();
+    public void addSendFiles(View v) {
+        new ChooserDialog(this)
+                .withFilter(false, false)
+                .titleFollowsDir(true)
+                .enableMultiple(true)
+                .enableOptions(true)
+                .displayPath(true)
+                .withChosenListener((dir, dirFile) -> {
+                    if (dirFile.isFile()) {
+                        if (temporaryFiles.containsKey(dir))
+                            temporaryFiles.remove(dir);
+                        else
+                            temporaryFiles.put(dir, dirFile);
+                    } else {
+                        Set<String> files =  temporaryFiles.keySet();
+
+                        for (String fileName : files) {
+                            File file = temporaryFiles.get(fileName);
+                            try {
+                                connection.sendFile(file, new SendProgress());
+                                transmissionList.add(new InfoFile(InfoFile.ShareState.SEND, file));
+                            } catch (FileNotFoundException | SocketException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                })
+                .build()
+                .show();
     }
 
     public void cancelSending(View v) {
         connection.cancelSending();
-        connection.cancelSendingCurrent();
     }
 
     public void showReceivedFolder(View v) {
-        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-        Uri uri = Uri.parse(receiveFolder);
-        intent.setDataAndType(uri, "vnd.android.cursor.dir/*");
-        startActivity(Intent.createChooser(intent, "Open folder"));
+//        Intent intent = new Intent(Intent.ACTION_VIEW);
+//        Uri uri = Uri.parse(receiveFolder);
+//        intent.setDataAndType(uri, "vnd.android.cursor.dir/*");
+//        startActivity(Intent.createChooser(intent, "Open folder"));
     }
 
     @Override
