@@ -3,10 +3,13 @@ package github.mjksabit.sabit.android.activities;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.SortedList;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.MarginLayoutParams;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
@@ -21,6 +24,9 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -92,6 +98,7 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
             @Override
             public void onAnimationStart(Animation animation) {
                 refreshReceivers.setEnabled(false);
+                servers.clear();
             }
 
             @Override
@@ -126,12 +133,14 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
         warningText.setVisibility(View.VISIBLE);
 
         showReceiverSelection.setVisibility(View.GONE);
+        WIDTH = transferRecyclerView.getMeasuredWidth();
+        middle = WIDTH/2;
         refreshReceiversList(null);
     }
 
     volatile boolean isRefreshing = false;
     public void refreshReceiversList(View view) {
-
+        receiverSelectionPanel.removeAllViews();
         new Thread(() -> {
             isRefreshing = true;
             runOnUiThread(() -> {
@@ -151,14 +160,63 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
         Sender.ServerInfo info = new Sender.ServerInfo(serverInfo);
 
         if (!servers.containsKey(info.getAddress())) {
-            Button button = new Button(this);
-            button.setText(info.getName());
-            button.setTag(info);
-            button.setOnClickListener(this::establishConnection);
-            runOnUiThread(() -> {
-                receiverSelectionPanel.addView(button);
-            });
+            addServer(info);
         }
+    }
+
+
+    private int WIDTH;
+    private int middle;
+    ArrayList<Double> usedAngles = new ArrayList<>();
+
+    private void addServer(Sender.ServerInfo info) {
+        Double useAngle = 0.0;
+
+        if (usedAngles.size() != 0) {
+            Collections.sort(usedAngles);
+
+            double currentMaxAngleDiff = 360 - (usedAngles.get(usedAngles.size()-1) - usedAngles.get(0));
+            double currentUseAngle = currentMaxAngleDiff/2;
+
+            for (int i=1; i<usedAngles.size(); i++) {
+                if (currentMaxAngleDiff < usedAngles.get(i) - usedAngles.get(i - 1))
+                    currentUseAngle = (usedAngles.get(i - 1) + usedAngles.get(i)) / 2;
+            }
+            useAngle = currentUseAngle;
+        }
+
+        usedAngles.add(useAngle);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+
+        Button selector = new Button(this);
+        selector.setText(info.getName());
+        selector.setHeight(selector.getMeasuredWidth());
+        selector.setTag(info);
+        selector.setOnClickListener(this::establishConnection);
+
+        if (useAngle>180) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
+            double marginRight = middle*(1-Math.cos(Math.toRadians(270-useAngle)));
+            params.rightMargin = (int) marginRight;
+        } else {
+            params.addRule(RelativeLayout.ALIGN_PARENT_LEFT, RelativeLayout.TRUE);
+            double marginLeft = middle*(1-Math.cos(Math.toRadians(90-useAngle)));
+            params.leftMargin = (int) marginLeft;
+        }
+
+        if (useAngle>90 && useAngle<270) {
+            params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM, RelativeLayout.TRUE);
+            double marginBottom = middle*(1-Math.cos(Math.toRadians(180-useAngle)));
+            params.bottomMargin = (int) marginBottom;
+        } else {
+            params.addRule(RelativeLayout.ALIGN_PARENT_TOP, RelativeLayout.TRUE);
+            double marginTop = middle*(1-Math.cos(Math.toRadians(useAngle)));
+            params.topMargin = (int) marginTop;
+        }
+
+
+        runOnUiThread( () -> receiverSelectionPanel.addView(selector, params));
     }
 
     private void establishConnection(View view) {
