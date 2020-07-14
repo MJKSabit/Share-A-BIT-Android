@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +49,7 @@ public class SettingsFragment extends Fragment {
 
         settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
-        usernameText = settings.getString(Constants.SETTINGS_ID, getResources().getString(R.string.default_id_name));
+        usernameText = settings.getString(Constants.SETTINGS_ID, Settings.Secure.getString(getContext().getContentResolver(), "bluetooth_name"));
         receiveLocationText = settings.getString(Constants.SETTINGS_PATH, getContext().getObbDir().getAbsolutePath());
 
     }
@@ -106,8 +107,8 @@ public class SettingsFragment extends Fragment {
 
         if (done) {
             builder.setTitle("Settings saved!");
-            builder.setMessage("Dear "+usernameText+",\n" +
-                    "Your Received files will be stored in\n" +
+            builder.setMessage("Device Name: "+usernameText+"\n\n" +
+                    "Received files will be stored in\n" +
                     receiveLocationText);
         } else {
             builder.setTitle("Settings not saved!");

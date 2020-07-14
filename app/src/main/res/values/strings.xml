@@ -1,27 +1,41 @@
 <resources>
     <string name="app_name">Share A BIT</string>
     <string name="title_home">Home</string>
+
     <string name="title_settings">Settings</string>
-    <string name="title_info">Information</string>
-    <string name="identifier_name">Identifier Name</string>
+
+    <string name="identifier_name">Device Name</string>
     <string name="default_id_name">Android User</string>
     <string name="receive_location_placeholder">/sdcard/Android/obb/github.mjksabit.sabit.android/</string>
     <string name="select_receive_directory">...</string>
     <string name="receive_option_header">Receive Directory</string>
     <string name="save_settings">Save</string>
-    <string name="permission_required">Permission Required</string>
-    <string name="permission_details">To Receive (Write) and Send (Read) file, We need File System Permission\nTry again after the permission has been granted.</string>
-    <string name="sender_connection_title">Sender Mode</string>
-    <string name="receiver_connection_title">Receiver Mode</string>
-    <string name="update_link">https://mjksabit.github.io</string>
+
+    <string name="title_info">Information</string>
+
     <string name="version_text">v 0.1.0</string>
+
     <string name="developer_header">Developed By</string>
     <string name="developer_name">Md. Jehadul Karim (Sabit)</string>
     <string name="github_username">MJKSabit</string>
     <string name="developer_website">mjksabit.github.io</string>
-    <string name="update_button_text">Check for Updates</string>
     <string name="github">GitHub</string>
     <string name="website_header">Website</string>
+
+    <string name="association_header">In Association with</string>
+    <string name="associate_name">Al Amru Bil Maruf</string>
+    <string name="associate_github_name">alamrubilmaruf412</string>
+
+    <string name="update_button_text">Check for Updates</string>
+    <string name="update_link">https://mjksabit.github.io</string>
+
+
+    <string name="permission_required">Permission Required</string>
+    <string name="permission_details">To Receive (Write) and Send (Read) file, We need File System Permission\nTry again after the permission has been granted.</string>
+
+    <string name="sender_connection_title">Sender Mode</string>
+    <string name="receiver_connection_title">Receiver Mode</string>
+
     <string name="cancel_text">Cancel Remaining</string>
     <string name="show_received_files">Show Received</string>
     <string name="end_connection">END</string>

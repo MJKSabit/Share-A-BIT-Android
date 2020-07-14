@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,7 +41,7 @@ public class HomeFragment extends Fragment implements View.OnClickListener {
         super.onResume();
         SharedPreferences settings = getContext().getSharedPreferences(Constants.SETTINGS_SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
-        usernameText = settings.getString(Constants.SETTINGS_ID, getResources().getString(R.string.default_id_name));
+        usernameText = settings.getString(Constants.SETTINGS_ID, Settings.Secure.getString(getContext().getContentResolver(), "bluetooth_name"));
         receiveLocationText = settings.getString(Constants.SETTINGS_PATH, getContext().getObbDir().getAbsolutePath());
     }
 
