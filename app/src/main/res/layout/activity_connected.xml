@@ -193,7 +193,7 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <TextView
-            android:id="@+id/send_total_file_size"
+            android:id="@+id/send_file_size"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/file_size_placeholder"

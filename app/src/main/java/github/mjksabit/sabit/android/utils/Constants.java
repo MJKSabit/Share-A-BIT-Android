@@ -8,4 +8,6 @@ public interface Constants {
     String USERNAME_KEY = "id";
     String CONNECTED_TO_KEY = "other";
     String RECEIVE_PATH_KEY = "receiveLocation";
+
+    int bytePerMB = 1024*1024;
 }
