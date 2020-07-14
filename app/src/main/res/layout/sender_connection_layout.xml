@@ -4,6 +4,81 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="5dp"
     tools:context=".activities.SenderActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/sender_file_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="4dp"
+        android:padding="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/receiver_selection_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sender_file_list_header" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_folder_sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:clickable="true"
+        android:onClick="addSendFolder"
+        app:backgroundTint="@color/add_button_color"
+        app:layout_constraintBottom_toBottomOf="@+id/add_file_sender"
+        app:layout_constraintEnd_toStartOf="@+id/add_file_sender"
+        app:layout_constraintTop_toTopOf="@+id/add_file_sender"
+        app:layout_constraintVertical_bias="0.0"
+        app:srcCompat="@drawable/ic_add_folder"
+        android:focusable="true" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_file_sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="addSendFiles"
+        app:backgroundTint="@color/add_button_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/ic_add_file" />
+
+    <RelativeLayout
+        android:id="@+id/receiver_selection_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/receiver_selection_mode_button"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+    </RelativeLayout>
+
+    <Button
+        android:id="@+id/receiver_selection_mode_button"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="12dp"
+        android:text="@string/show_receiver_selection_panel"
+        app:layout_constraintBottom_toBottomOf="@+id/add_folder_sender"
+        app:layout_constraintEnd_toStartOf="@+id/add_folder_sender"
+        app:layout_constraintHorizontal_bias="0.23"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/add_folder_sender" />
+
+    <TextView
+        android:id="@+id/sender_file_list_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:text="@string/sender_file_list_header"
+        android:textColor="@android:color/black"
+        app:layout_constraintStart_toStartOf="@+id/sender_file_list"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
