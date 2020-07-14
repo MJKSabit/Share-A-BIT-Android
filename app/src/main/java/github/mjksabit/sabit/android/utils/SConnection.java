@@ -22,11 +22,13 @@ public class SConnection {
     }
 
     public static void endConnection() {
-        try {
-            connection.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        connection = null;
+        new Thread(() -> {
+            try {
+                connection.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            connection = null;
+        }).start();
     }
 }

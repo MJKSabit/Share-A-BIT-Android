@@ -46,14 +46,18 @@ public class ReceiverActivity extends AppCompatActivity {
             try {
                 String senderName = receiver.waitForSender();
 
-                Intent connection = new Intent(this, ConnectedActivity.class);
+                Intent connection = new Intent(getBaseContext(), ConnectedActivity.class);
                 connection.putExtra(Constants.USERNAME_KEY, usernameID);
                 connection.putExtra(Constants.CONNECTED_TO_KEY, senderName);
                 connection.putExtra(Constants.RECEIVE_PATH_KEY, receiveDirectory);
 
+                receiver.stopListening();
                 SConnection.setConnection(receiver);
 
-                runOnUiThread(() -> startActivity(connection));
+                runOnUiThread(() -> {
+                    startActivity(connection);
+                    finish();
+                });
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -65,6 +69,7 @@ public class ReceiverActivity extends AppCompatActivity {
         try {
             receiver.stopListening();
             receiver.close();
+            finish();
         } catch (IOException e) {
             e.printStackTrace();
         }

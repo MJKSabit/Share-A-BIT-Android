@@ -29,4 +29,5 @@
     <string name="speed_placeholder">00.000 MB</string>
     <string name="per_second">/s</string>
     <string name="speed_icon_description">Current Speed</string>
+    <string name="file_size_placeholder">0000.000 MB</string>
 </resources>
