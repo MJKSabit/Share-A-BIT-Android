@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.obsez.android.lib.filechooser.ChooserDialog;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import github.mjksabit.sabit.android.R;
+import github.mjksabit.sabit.android.adapter.FileListAdapter;
 import github.mjksabit.sabit.android.data.InfoFile;
 import github.mjksabit.sabit.android.utils.Constants;
 import github.mjksabit.sabit.android.utils.SConnection;
@@ -47,7 +49,7 @@ public class ConnectedActivity extends AppCompatActivity {
     private volatile boolean isSending = false;
 
 
-    private String getInMB(long size) {
+    public static String getInMB(long size) {
         return String.format("%.3f MB", (double) size / bytePerMB);
     }
 
@@ -65,6 +67,7 @@ public class ConnectedActivity extends AppCompatActivity {
             });
             lastProgress = 0;
             isReceiving = true;
+            firstTime = true;
         }
 
         @Override
@@ -98,7 +101,9 @@ public class ConnectedActivity extends AppCompatActivity {
         public void endProgress(File file) {
             byteTransferredInTime += fileSize - lastProgress;
             runOnUiThread(() -> {
-                transmissionList.add(new InfoFile(InfoFile.ShareState.RECEIVE, file));
+                InfoFile infoFile = new InfoFile(InfoFile.ShareState.RECEIVE, file);
+                infoFile.setFileSize(fileSize);
+                fileReceived(infoFile);
                 receiveLayout.startAnimation(receiveCompletedAnimation);
             });
             isReceiving = false;
@@ -172,10 +177,11 @@ public class ConnectedActivity extends AppCompatActivity {
     private TextView transferSpeedText;
 
     private RecyclerView transferRecyclerView;
+    private FileListAdapter fileListAdapter;
 
     private String receiveFolder;
 
-    private ArrayList<InfoFile> transmissionList = new ArrayList<>();
+    private final ArrayList<InfoFile> transmissionList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -276,6 +282,32 @@ public class ConnectedActivity extends AppCompatActivity {
         receiveFileProgressBar = findViewById(R.id.receive_progress_bar);
 
         transferRecyclerView = findViewById(R.id.transfer_list);
+        transferRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        transferRecyclerView.setHasFixedSize(true);
+
+        fileListAdapter = new FileListAdapter(this, transmissionList);
+        transferRecyclerView.setAdapter(fileListAdapter);
+    }
+
+    private void fileReceived(InfoFile infoFile) {
+        synchronized (transmissionList) {
+            int position = transmissionList.size();
+            transmissionList.add(infoFile);
+            fileListAdapter.notifyItemInserted(position);
+        }
+    }
+
+    private void sendFile(File file) {
+        try {
+            connection.sendFile(file, new SendProgress());
+            synchronized (transmissionList) {
+                int position = transmissionList.size();
+                transmissionList.add(new InfoFile(InfoFile.ShareState.SEND, file));
+                fileListAdapter.notifyItemInserted(position);
+            }
+        } catch (FileNotFoundException | SocketException e) {
+            e.printStackTrace();
+        }
     }
 
     public void addSendFolder(View v) {
@@ -283,14 +315,7 @@ public class ConnectedActivity extends AppCompatActivity {
                 .titleFollowsDir(true)
                 .withFilter(true, false)
                 .displayPath(true)
-                .withChosenListener((dir, dirFile) -> {
-                    try {
-                        connection.sendFile(dirFile, new SendProgress());
-                        transmissionList.add(new InfoFile(InfoFile.ShareState.SEND, dirFile));
-                    } catch (FileNotFoundException | SocketException e) {
-                        e.printStackTrace();
-                    }
-                })
+                .withChosenListener((dir, dirFile) -> sendFile(dirFile))
                 .build()
                 .show();
     }
@@ -312,15 +337,8 @@ public class ConnectedActivity extends AppCompatActivity {
                     } else {
                         Set<String> files =  temporaryFiles.keySet();
 
-                        for (String fileName : files) {
-                            File file = temporaryFiles.get(fileName);
-                            try {
-                                connection.sendFile(file, new SendProgress());
-                                transmissionList.add(new InfoFile(InfoFile.ShareState.SEND, file));
-                            } catch (FileNotFoundException | SocketException e) {
-                                e.printStackTrace();
-                            }
-                        }
+                        for (String fileName : files)
+                            sendFile(temporaryFiles.get(fileName));
                     }
                 })
                 .build()

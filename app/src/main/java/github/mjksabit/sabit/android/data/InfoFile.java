@@ -17,6 +17,10 @@ public class InfoFile {
         this.fileSize = file.length();
     }
 
+    public void setFileSize(long fileSize) {
+        this.fileSize = fileSize;
+    }
+
     public ShareState getState() {
         return state;
     }
