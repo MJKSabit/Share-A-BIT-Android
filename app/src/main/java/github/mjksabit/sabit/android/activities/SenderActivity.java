@@ -1,5 +1,6 @@
 package github.mjksabit.sabit.android.activities;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -7,6 +8,7 @@ import androidx.recyclerview.widget.SortedList;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +21,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,15 +38,19 @@ import java.util.Map;
 
 import github.mjksabit.autoconnect.ClientSide;
 import github.mjksabit.autoconnect.ServerDiscoveryObserver;
+import github.mjksabit.autoconnect.SharedInfo;
 import github.mjksabit.sabit.android.R;
 import github.mjksabit.sabit.android.adapter.FileListAdapter;
 import github.mjksabit.sabit.android.data.InfoFile;
 import github.mjksabit.sabit.android.utils.Constants;
 import github.mjksabit.sabit.android.utils.FileChooser;
 import github.mjksabit.sabit.android.utils.SConnection;
+import github.mjksabit.sabit.core.Constant;
 import github.mjksabit.sabit.core.Sender;
 
 public class SenderActivity extends AppCompatActivity implements ServerDiscoveryObserver {
+
+    private String TAG = SenderActivity.class.getSimpleName();
 
     private final FileChooser fileChooser = new FileChooser(this);
 
@@ -73,7 +82,17 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
         receiveDirectory = data.getStringExtra(Constants.RECEIVE_PATH_KEY);
 
         getSupportActionBar().setTitle(senderName);
-        sender = new Sender(senderName, this);
+
+        Log.d(TAG, "onCreate: New Sender Created");
+        try {
+            sender = new Sender(senderName, this);
+        } catch (SocketException | JSONException e) {
+            e.printStackTrace();
+            finish();
+            new AlertDialog.Builder(getBaseContext()).setTitle("Unable To Create Sender Instance")
+                    .setMessage("Make Sure You're Connected to a WiFi (Not Your Hotspot Network!)")
+                    .show();
+        }
         sender.setFileSaveDirectory(receiveDirectory);
     }
 
@@ -151,17 +170,24 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
                 refreshReceivers.startAnimation(refreshAnimation);
             });
 
-            sender.sendPresence();
+            try {
+                sender.sendPresence();
+            } catch (ConnectException e) {
+                e.printStackTrace();
+                runOnUiThread( () -> new AlertDialog.Builder(getBaseContext()).setTitle("Unable To Find Receiver")
+                        .setMessage("Make Sure You're Connected to a WiFi (Not Your Hotspot Network!)")
+                        .show() );
+            }
             isRefreshing = false;
         }).start();
 
     }
 
 
-    Map<InetAddress, Sender.ServerInfo> servers = new LinkedHashMap<>();
+    Map<InetAddress, Sender.ReceiverInfo> servers = new LinkedHashMap<>();
     @Override
-    public void serverDiscovered(ClientSide.ServerInfo serverInfo) {
-        Sender.ServerInfo info = new Sender.ServerInfo(serverInfo);
+    public void serverDiscovered(SharedInfo serverInfo) {
+        Sender.ReceiverInfo info = new Sender.ReceiverInfo(serverInfo);
 
         if (!servers.containsKey(info.getAddress())) {
             addServer(info);
@@ -173,7 +199,7 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
     private int middle;
     ArrayList<Double> usedAngles = new ArrayList<>();
 
-    private synchronized void addServer(Sender.ServerInfo info) {
+    private synchronized void addServer(Sender.ReceiverInfo info) {
         Double useAngle = 0.0;
 
         if (usedAngles.size() != 0) {
@@ -183,8 +209,10 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
             double currentUseAngle = currentMaxAngleDiff/2;
 
             for (int i=1; i<usedAngles.size(); i++) {
-                if (currentMaxAngleDiff < usedAngles.get(i) - usedAngles.get(i - 1))
+                if (currentMaxAngleDiff < usedAngles.get(i) - usedAngles.get(i - 1)) {
+                    currentMaxAngleDiff = usedAngles.get(i) - usedAngles.get(i - 1);
                     currentUseAngle = (usedAngles.get(i - 1) + usedAngles.get(i)) / 2;
+                }
             }
             useAngle = currentUseAngle;
         }
@@ -199,7 +227,9 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
         selector.setTag(info);
         selector.setOnClickListener(this::establishConnection);
 
-        if (useAngle>180) {
+        Log.d(TAG, "addServer: at Angle: " + useAngle);
+
+        if (useAngle>=180) {
             params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT, RelativeLayout.TRUE);
             double marginRight = middle*(1-Math.cos(Math.toRadians(270-useAngle)));
             params.rightMargin = (int) marginRight;
@@ -219,18 +249,16 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
             params.topMargin = (int) marginTop;
         }
 
-
         runOnUiThread( () -> receiverSelectionPanel.addView(selector, params));
     }
 
     private void establishConnection(View view) {
-        Sender.ServerInfo info = (Sender.ServerInfo) view.getTag();
+        Sender.ReceiverInfo info = (Sender.ReceiverInfo) view.getTag();
         new Thread(() -> {
             try {
                 Socket connectionSocket = new Socket(info.getAddress(), info.getPort());
                 String receiver = sender.makeConnection(connectionSocket, senderName);
 
-                sender.setFileSaveDirectory(receiveDirectory);
                 SConnection.setConnection(sender, receiveDirectory);
 
                 JSONArray filePaths = new JSONArray();
@@ -256,13 +284,10 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
 
     @Override
     public void onBackPressed() {
-        try {
-            sender.stopListing();
-            sender.close();
-            finish();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Log.d(TAG, "onBackPressed: Sender Stop Listing");
+        sender.stopListening();
+        // No need To Close as "makeConnection" is Never called
+        finish();
         super.onBackPressed();
     }
 }

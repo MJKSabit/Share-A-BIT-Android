@@ -58,31 +58,31 @@ public class ConnectedActivity extends AppCompatActivity {
 
     private class ReceiveProgress implements IFTP.ProgressUpdater {
         private long lastProgress = 0;
-        private boolean firstTime = true;
         private long fileSize;
+        private String parentPath;
+        private File mFile;
 
         @Override
-        public void startProgress(File file) {
+        public void startProgress(File file, String parentPath, long totalSize) {
             runOnUiThread(() -> {
                 receiveFileProgressBar.setIndeterminate(false);
                 receiveFileName.setText(file.getName());
                 receiveLayout.setVisibility(View.VISIBLE);
+                receiveFileTotal.setText(getInMB(totalSize));
             });
             lastProgress = 0;
             isReceiving = true;
-            firstTime = true;
+            fileSize = totalSize;
+            this.parentPath = parentPath;
+            mFile = file;
         }
 
         @Override
-        public void continueProgress(long currentProgress, long totalProgress) {
+        public void continueProgress(long currentProgress) {
             byteTransferredInTime += currentProgress - lastProgress;
             lastProgress = currentProgress;
-            if (firstTime){
-                firstTime = false;
-                fileSize = totalProgress;
-                runOnUiThread(()->receiveFileTotal.setText(getInMB(totalProgress)));
-            }
-            double percentage = currentProgress*100.0 / totalProgress;
+
+            double percentage = currentProgress*100.0 / fileSize;
             String string = getInMB(currentProgress);
             runOnUiThread(() -> {
                 receiveFileDone.setText(string);
@@ -92,7 +92,7 @@ public class ConnectedActivity extends AppCompatActivity {
         }
 
         @Override
-        public void cancelProgress(File file) {
+        public void cancelProgress() {
             runOnUiThread(() -> {
                 receiveFileProgressBar.setIndeterminate(true);
                 receiveFileName.setText("Canceled");
@@ -101,10 +101,10 @@ public class ConnectedActivity extends AppCompatActivity {
         }
 
         @Override
-        public void endProgress(File file) {
+        public void endProgress() {
             byteTransferredInTime += fileSize - lastProgress;
             runOnUiThread(() -> {
-                InfoFile infoFile = new InfoFile(InfoFile.ShareState.RECEIVE, file);
+                InfoFile infoFile = new InfoFile(InfoFile.ShareState.RECEIVE, mFile);
                 infoFile.setFileSize(fileSize);
                 fileReceived(infoFile);
                 receiveLayout.startAnimation(receiveCompletedAnimation);
@@ -114,10 +114,14 @@ public class ConnectedActivity extends AppCompatActivity {
     }
 
     private class SendProgress implements IFTP.ProgressUpdater {
+        private File mFile;
+        private long fileSize;
         private long lastProgress = 0;
+        private int index;
+
 
         @Override
-        public void startProgress(File file) {
+        public void startProgress(File file, String parentPath, long totalSize) {
             runOnUiThread(() -> {
                 sendFileProgressBar.setIndeterminate(false);
                 sendLayout.setVisibility(View.VISIBLE);
@@ -125,14 +129,16 @@ public class ConnectedActivity extends AppCompatActivity {
                 sendFileTotal.setText(getInMB(file.length()));
             });
             lastProgress = 0;
+            mFile = file;
+            fileSize = totalSize;
             isSending = true;
         }
 
         @Override
-        public void continueProgress(long currentProgress, long totalProgress) {
+        public void continueProgress(long currentProgress) {
             byteTransferredInTime += currentProgress - lastProgress;
             lastProgress = currentProgress;
-            double percentage = (double) currentProgress*100 / totalProgress;
+            double percentage = (double) currentProgress*100 / fileSize;
             String string = getInMB(currentProgress);
             runOnUiThread(() -> {
                 sendFileDone.setText(string);
@@ -142,7 +148,7 @@ public class ConnectedActivity extends AppCompatActivity {
         }
 
         @Override
-        public void cancelProgress(File file) {
+        public void cancelProgress() {
             runOnUiThread(() -> {
                 sendFileProgressBar.setIndeterminate(true);
                 sendFileName.setText("Canceled");
@@ -150,8 +156,8 @@ public class ConnectedActivity extends AppCompatActivity {
         }
 
         @Override
-        public void endProgress(File file) {
-            byteTransferredInTime += file.length() - lastProgress;
+        public void endProgress() {
+            byteTransferredInTime += fileSize - lastProgress;
             isSending = false;
             runOnUiThread(() -> {
                 sendLayout.startAnimation(sendCompletedAnimation);
