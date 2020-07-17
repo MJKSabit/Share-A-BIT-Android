@@ -174,7 +174,7 @@ public class SenderActivity extends AppCompatActivity implements ServerDiscovery
                 sender.sendPresence();
             } catch (ConnectException e) {
                 e.printStackTrace();
-                runOnUiThread( () -> new AlertDialog.Builder(getBaseContext()).setTitle("Unable To Find Receiver")
+                runOnUiThread( () -> new AlertDialog.Builder(this).setTitle("Unable To Find Receiver")
                         .setMessage("Make Sure You're Connected to a WiFi (Not Your Hotspot Network!)")
                         .show() );
             }

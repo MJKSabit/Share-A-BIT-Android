@@ -36,7 +36,8 @@
     <string name="sender_connection_title">Sender Mode</string>
     <string name="receiver_connection_title">Receiver Mode</string>
 
-    <string name="cancel_text">Cancel Remaining</string>
+    <string name="cancel_text">Cancel Sending</string>
+
     <string name="show_received_files">Show Received</string>
     <string name="end_connection">END</string>
     <string name="transfers_header">Transfers</string>
@@ -47,6 +48,8 @@
     <string name="sender_file_list_header">Files to Send</string>
     <string name="show_receiver_selection_panel">Next</string>
     <string name="receiver_waiting_text">Waiting for sender to connect</string>
-    <string name="connection_warning_text">Please make sure Senderand Receiveris connected to the same network ( via WiFi or Hotspot )</string>
+    <string name="connection_warning_text">Make sure both are connected (Sender[ via WiFi] and  Receiver[ via WiFi/Hotspot])</string>
+
     <string name="cancel_button">Cancel</string>
+    <string name="cancelling">Cancelling ...</string>
 </resources>
