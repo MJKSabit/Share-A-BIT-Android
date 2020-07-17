@@ -190,6 +190,7 @@ public class ConnectedActivity extends AppCompatActivity {
     private RecyclerView transferRecyclerView;
     private FileListAdapter fileListAdapter;
 
+    private TextView savePath;
     private String receiveFolder;
 
     private final ArrayList<InfoFile> transmissionList = new ArrayList<>();
@@ -207,6 +208,7 @@ public class ConnectedActivity extends AppCompatActivity {
         Intent data = getIntent();
         String connectedTo = data.getStringExtra(Constants.CONNECTED_TO_KEY);
         receiveFolder = data.getStringExtra(Constants.RECEIVE_PATH_KEY);
+        savePath.setText("Saving At: "+receiveFolder);
 
         String initialSend = data.getStringExtra(Constants.INITIAL_FILES_KEY);
         if (initialSend==null)
@@ -312,6 +314,8 @@ public class ConnectedActivity extends AppCompatActivity {
 
         fileListAdapter = new FileListAdapter(this, transmissionList);
         transferRecyclerView.setAdapter(fileListAdapter);
+
+        savePath = findViewById(R.id.save_path_show);
     }
 
     private void fileReceived(InfoFile infoFile) {

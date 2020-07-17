@@ -36,6 +36,7 @@
         android:id="@+id/transfer_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginBottom="30dp"
         android:padding="10dp"
         app:layout_constraintBottom_toTopOf="@+id/floatingActionButton"
         app:layout_constraintEnd_toEndOf="parent"
@@ -296,4 +297,17 @@
         app:layout_constraintTop_toTopOf="@+id/floatingActionButton"
         app:layout_constraintVertical_bias="0.0"
         app:srcCompat="@drawable/ic_add_folder" />
+
+    <TextView
+        android:id="@+id/save_path_show"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:lines="2"
+        android:singleLine="false"
+        android:text="TextView"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toTopOf="@+id/add_folder_fab"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/transfer_list" />
 </androidx.constraintlayout.widget.ConstraintLayout>
